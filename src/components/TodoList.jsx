@@ -1,7 +1,6 @@
 import {
     GetAllCompletedTodosFromFirestore,
-    GetAllIncompletedTodosFromFirestore,
-    GetAllTodosFromFirestore
+    GetAllIncompletedTodosFromFirestore
 } from "../firebase/functions/todo-backend.js";
 import {useContext, useEffect, useState} from "react";
 import {TodoCard} from "./TodoCard.jsx";
@@ -14,10 +13,10 @@ export function TodoList() {
     const fetchTodos = () => {
         GetAllIncompletedTodosFromFirestore().then(res => {
             setIncompletedTodos(res)
-        } )
+        })
         GetAllCompletedTodosFromFirestore().then(res => {
             setCompletedTodos(res)
-        } )
+        })
     }
     useEffect(() => {
         fetchTodos()

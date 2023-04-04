@@ -1,5 +1,4 @@
 import {useContext, useState} from "react";
-import {TodoCard} from "./TodoCard.jsx";
 import {AddTodoToFirestore} from "../firebase/functions/todo-backend.js";
 import addTodoContext from "../context/todos/addTodoContext.js";
 

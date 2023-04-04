@@ -3,13 +3,13 @@ import {DeleteTodoFromFirestore, SetTodoCompleted} from "../firebase/functions/t
 export function TodoCard({todo,fetchAgain, showOptions = false}) {
 
     const CompleteTodo = async () => {
-        SetTodoCompleted(todo.id, !todo.completed).then(res => {
+        SetTodoCompleted(todo.id, !todo.completed).then(() => {
             fetchAgain()
         })
     }
 
     const DeleteTodo = async () => {
-        DeleteTodoFromFirestore(todo.id).then(res => {
+        DeleteTodoFromFirestore(todo.id).then(() => {
              fetchAgain()
          })
     }

@@ -23,14 +23,6 @@ export const AddTodoToFirestore = async (todo) => {
     return response.id;
 }
 
-export const GetAllTodosFromFirestore = async () => {
-    const querySnapshot = await getDocs(collection(db, docName));
-    const todos = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-    if (isDev)
-        console.log("GetAllTodosFromFirestore: Got all todos: ", todos);
-    return todos;
-}
-
 export const SetTodoCompleted = async (todoId, completed) => {
     const todoRef = doc(db, docName, todoId);
     if (todoRef === null) {
