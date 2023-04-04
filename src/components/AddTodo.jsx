@@ -1,6 +1,7 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {TodoCard} from "./TodoCard.jsx";
 import {AddTodoToFirestore} from "../firebase/functions/todo-backend.js";
+import addTodoContext from "../context/todos/addTodoContext.js";
 
 export function AddTodo() {
     const [todo, setTodo] = useState({
@@ -8,8 +9,10 @@ export function AddTodo() {
         description: '',
         completed: false
     })
+    const isAdded = useContext(addTodoContext);
 
-    const AddToDatabase = async () => {
+    const AddToDatabase = async (e) => {
+        e.preventDefault();
         const res = await AddTodoToFirestore(todo);
         if(res) {
             setTodo({
@@ -17,12 +20,13 @@ export function AddTodo() {
                 description: '',
                 completed: false
             })
+            isAdded.updateIsAdded()
         }
     }
 
     return (
         <>
-            <div>
+            <form onSubmit={AddToDatabase}>
                 <h3>
                     Add Entry
                 </h3>
@@ -47,13 +51,11 @@ export function AddTodo() {
                 />
 
                 <button
-                    onClick={AddToDatabase}
+                    type={"submit"}
+                    onSubmit={AddToDatabase}
                 >Add
                 </button>
-            </div>
-            <div>
-                <TodoCard todo={todo}/>
-            </div>
+            </form>
         </>
     )
 }
