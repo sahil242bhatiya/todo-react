@@ -1,11 +1,13 @@
-import {addDoc, collection, getDocs} from 'firebase/firestore';
+import {addDoc, collection, doc, getDocs, query, Timestamp, updateDoc, where, deleteDoc} from 'firebase/firestore';
 import {verifyTodoObject} from "../../utils/todo-verification.js";
-import {Timestamp} from "firebase/firestore";
 import {db} from "./init.js";
+import {isDev} from "../../utils/basicChecks.js";
 
 const docName = 'todos';
 export const AddTodoToFirestore = async (todo) => {
     if (verifyTodoObject(todo) === false) {
+        if (isDev)
+            console.log("AddTodoToFirestore: Todo object is not valid");
         return null;
     }
     const response = await addDoc(collection(db, docName), {
@@ -16,14 +18,65 @@ export const AddTodoToFirestore = async (todo) => {
         sharedWith: [],
         timestamp: Timestamp.now()
     });
+    if (isDev)
+        console.log("AddTodoToFirestore: Added todo with ID: ", response.id);
     return response.id;
 }
 
 export const GetAllTodosFromFirestore = async () => {
     const querySnapshot = await getDocs(collection(db, docName));
-    const todos = [];
-    querySnapshot.forEach((doc) => {
-        todos.push(doc.data());
-    });
+    const todos = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    if (isDev)
+        console.log("GetAllTodosFromFirestore: Got all todos: ", todos);
     return todos;
+}
+
+export const SetTodoCompleted = async (todoId, completed) => {
+    const todoRef = doc(db, docName, todoId);
+    if (todoRef === null) {
+        if (isDev)
+            console.log("SetTodoCompleted: Todo not found");
+        return null;
+    }
+    const response = await updateDoc(todoRef, {
+        completed: completed
+    });
+    if (isDev)
+        console.log("SetTodoCompleted: Set todo completed: ", completed);
+    return response;
+}
+
+export const GetAllCompletedTodosFromFirestore = async () => {
+    const todoCollection = collection(db, docName);
+    const querySnapshot = await getDocs(query(todoCollection, where("completed", "==", true)));
+    const completedTodos = (querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))).sort((a, b) => {
+        return b.timestamp.seconds - a.timestamp.seconds;
+    });
+    if (isDev)
+        console.log("GetAllCompletedTodosFromFirestore: Got all completed todos: ", completedTodos);
+    return completedTodos;
+}
+
+export const GetAllIncompletedTodosFromFirestore = async () => {
+    const todoCollection = collection(db, docName);
+    const querySnapshot = await getDocs(query(todoCollection, where("completed", "!=", true)));
+    const completedTodos = (querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))).sort((a, b) => {
+        return b.timestamp.seconds - a.timestamp.seconds;
+    });
+    if (isDev)
+        console.log("GetAllCompletedTodosFromFirestore: Got all completed todos: ", completedTodos);
+    return completedTodos;
+}
+
+export const DeleteTodoFromFirestore = async (todoId) => {
+    const todoRef = doc(db, docName, todoId);
+    if (todoRef === null) {
+        if (isDev)
+            console.log("DeleteTodoFromFirestore: Todo not found");
+        return null;
+    }
+    const response = await deleteDoc(todoRef);
+    if (isDev)
+        console.log("DeleteTodoFromFirestore: Deleted todo with ID: ", todoId);
+    return response;
 }
