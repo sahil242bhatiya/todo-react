@@ -5,10 +5,7 @@ const AddTodoState = (props) => {
     const [isAdded, setIsAdded] = useState(false);
 
     const updateIsAdded = () => {
-        setIsAdded(true);
-        setTimeout(() => {
-            setIsAdded(false);
-        }, 100);
+        setIsAdded(prevState => !prevState);
     }
 
     return (

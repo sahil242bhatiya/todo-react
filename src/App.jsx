@@ -1,18 +1,18 @@
 import './App.css'
-import {AddTodo} from "./components/AddTodo.jsx";
 import React from "react";
-import {TodoList} from "./components/TodoList.jsx";
 import AddTodoState from "./context/todos/addTodoState";
+import {Route, Routes} from "react-router-dom";
+import Home from "./pages/home/index.jsx";
+import Login from "./pages/login/index.jsx";
 
 function App() {
     return (
-        <div className="App">
-            <h1>Todo App</h1>
-            <AddTodoState>
-                <AddTodo/>
-                <TodoList />
-            </AddTodoState>
-        </div>
+        <AddTodoState>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/login" element={<Login/>}/>
+            </Routes>
+        </AddTodoState>
     )
 }
 

@@ -1,4 +1,4 @@
-import {addDoc, collection, doc, getDocs, query, Timestamp, updateDoc, where, deleteDoc} from 'firebase/firestore';
+import {addDoc, collection, deleteDoc, doc, getDocs, query, Timestamp, updateDoc, where} from 'firebase/firestore';
 import {verifyTodoObject} from "../../utils/todo-verification.js";
 import {db} from "./init.js";
 import {isDev} from "../../utils/basicChecks.js";
